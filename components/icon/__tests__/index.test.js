@@ -4,8 +4,11 @@ import ReactIcon from '@ant-design/icons-react';
 import Icon from '..';
 import Tooltip from '../../tooltip';
 import { getThemeFromTypeName, withThemeSuffix } from '../utils';
+import mountTest from '../../../tests/shared/mountTest';
 
 describe('Icon', () => {
+  mountTest(Icon);
+
   it('should render to a <i class="xxx"><svg>...</svg></i>', () => {
     const wrapper = render(<Icon type="message" className="my-icon-classname" />);
     expect(wrapper).toMatchSnapshot();
@@ -159,7 +162,7 @@ describe('Icon', () => {
   it('should support svg react component', () => {
     const SvgComponent = props => (
       <svg viewBox="0 0 24 24" {...props}>
-        <title>Cool Home</title>
+        <title>Custom Svg</title>
         <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
       </svg>
     );
@@ -177,6 +180,9 @@ describe('Icon', () => {
 describe('Icon.createFromIconfontCN()', () => {
   const IconFont = Icon.createFromIconfontCN({
     scriptUrl: '//at.alicdn.com/t/font_8d5l8fzk5b87iudi.js',
+    extraCommonProps: {
+      className: 'abc',
+    },
   });
 
   it('should support iconfont.cn', () => {
@@ -185,6 +191,17 @@ describe('Icon.createFromIconfontCN()', () => {
         <IconFont type="icon-tuichu" />
         <IconFont type="icon-facebook" />
         <IconFont type="icon-twitter" />
+      </div>,
+    );
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('extraCommonProps should works fine and can be overwritten', () => {
+    const wrapper = render(
+      <div className="icons-list">
+        <IconFont type="icon-tuichu" className="bcd" />
+        <IconFont type="icon-facebook" />
+        <IconFont type="icon-twitter" className="efg" />
       </div>,
     );
     expect(wrapper).toMatchSnapshot();

@@ -9,27 +9,11 @@
   height: @input-height-lg;
   padding: @input-padding-vertical-lg @input-padding-horizontal-lg;
   font-size: @font-size-lg;
-  line-height: @input-height-lg;
-  // https://github.com/ant-design/ant-design/issues/17753
-  line-height: ~'@{line-height-base} \9';
-  // stylelint-disable-next-line
-  _:-ms-input-placeholder,
-  :root & {
-    line-height: @line-height-base;
-  }
 }
 
 .input-sm() {
   height: @input-height-sm;
   padding: @input-padding-vertical-sm @input-padding-horizontal-sm;
-  line-height: @input-height-sm;
-  // https://github.com/ant-design/ant-design/issues/17753
-  line-height: ~'@{line-height-base} \9';
-  // stylelint-disable-next-line
-  _:-ms-input-placeholder,
-  :root & {
-    line-height: @line-height-base;
-  }
 }
 
 // input status
@@ -67,14 +51,7 @@
   padding: @input-padding-vertical-base @input-padding-horizontal-base;
   color: @input-color;
   font-size: @font-size-base;
-  line-height: @input-height-base;
-  // https://github.com/ant-design/ant-design/issues/17753
-  line-height: ~'@{line-height-base} \9';
-  // stylelint-disable-next-line
-  _:-ms-input-placeholder,
-  :root & {
-    line-height: @line-height-base;
-  }
+  line-height: @line-height-base;
   background-color: @input-bg;
   background-image: none;
   border: @border-width-base @border-style-base @input-border-color;
@@ -185,7 +162,6 @@
     color: @input-color;
     font-weight: normal;
     font-size: @font-size-base;
-    line-height: 1;
     text-align: center;
     background-color: @input-addon-bg;
     border: @border-width-base @border-style-base @input-border-color;
@@ -331,13 +307,14 @@
       float: none;
     }
 
-    // reset border for Select, DatePicker, AutoComplete, Cascader, Mention, TimePicker
+    // reset border for Select, DatePicker, AutoComplete, Cascader, Mention, TimePicker, Input
     & > .@{ant-prefix}-select > .@{ant-prefix}-select-selection,
     & > .@{ant-prefix}-calendar-picker .@{ant-prefix}-input,
     & > .@{ant-prefix}-select-auto-complete .@{ant-prefix}-input,
     & > .@{ant-prefix}-cascader-picker .@{ant-prefix}-input,
     & > .@{ant-prefix}-mention-wrapper .@{ant-prefix}-mention-editor,
-    & > .@{ant-prefix}-time-picker .@{ant-prefix}-time-picker-input {
+    & > .@{ant-prefix}-time-picker .@{ant-prefix}-time-picker-input,
+    & > .@{ant-prefix}-input-group-wrapper .@{ant-prefix}-input {
       border-right-width: @border-width-base;
       border-radius: 0;
 
@@ -407,12 +384,21 @@
     position: absolute;
     top: 50%;
     z-index: 2;
+    display: flex;
+    align-items: center;
     color: @input-color;
     line-height: 0;
     transform: translateY(-50%);
 
     :not(.anticon) {
       line-height: @line-height-base;
+    }
+  }
+
+  .@{inputClass}-disabled ~ .@{inputClass}-suffix {
+    .anticon {
+      color: @disabled-color;
+      cursor: not-allowed;
     }
   }
 
@@ -432,7 +418,32 @@
     padding-right: @input-padding-horizontal-base + @input-affix-width;
   }
 
-  &.@{inputClass}-affix-wrapper-with-clear-btn .@{inputClass}:not(:last-child) {
+  &.@{inputClass}-affix-wrapper-input-with-clear-btn .@{inputClass}:not(:last-child) {
     padding-right: @input-padding-horizontal-base + @input-affix-with-clear-btn-width;
+  }
+
+  &.@{inputClass}-affix-wrapper-textarea-with-clear-btn .@{inputClass} {
+    padding-right: 22px;
+  }
+}
+
+.clear-icon() {
+  color: @disabled-color;
+  font-size: @font-size-sm;
+  // https://github.com/ant-design/ant-design/pull/18151
+  // https://codesandbox.io/s/wizardly-sun-u10br
+  cursor: pointer;
+  transition: color 0.3s;
+
+  &:hover {
+    color: @text-color-secondary;
+  }
+
+  &:active {
+    color: @text-color;
+  }
+
+  + i {
+    margin-left: 6px;
   }
 }

@@ -154,6 +154,8 @@ export interface TreeProps {
   onDragOver?: (options: AntTreeNodeMouseEvent) => void;
   onDragLeave?: (options: AntTreeNodeMouseEvent) => void;
   onDragEnd?: (options: AntTreeNodeMouseEvent) => void;
+  onMouseEnter?: (options: AntTreeNodeMouseEvent) => void;
+  onMouseLeave?: (options: AntTreeNodeMouseEvent) => void;
   onDrop?: (options: AntTreeNodeDropEvent) => void;
   style?: React.CSSProperties;
   showIcon?: boolean;
@@ -186,33 +188,32 @@ export default class Tree extends React.Component<TreeProps, any> {
   renderSwitcherIcon = (
     prefixCls: string,
     switcherIcon: React.ReactElement<any> | undefined,
-    { isLeaf, expanded, loading }: AntTreeNodeProps,
+    { isLeaf, expanded, loading, icon }: AntTreeNodeProps,
   ) => {
     const { showLine } = this.props;
     if (loading) {
       return <Icon type="loading" className={`${prefixCls}-switcher-loading-icon`} />;
     }
-    if (showLine) {
-      if (isLeaf) {
-        return <Icon type="file" className={`${prefixCls}-switcher-line-icon`} />;
+    if (isLeaf) {
+      if (showLine) {
+        return icon || <Icon type="file" className={`${prefixCls}-switcher-line-icon`} />;
       }
-      return (
+      return null;
+    }
+    const switcherCls = `${prefixCls}-switcher-icon`;
+    if (switcherIcon) {
+      return React.cloneElement(switcherIcon, {
+        className: classNames(switcherIcon.props.className || '', switcherCls),
+      });
+    }
+    if (showLine) {
+      return icon || (
         <Icon
           type={expanded ? 'minus-square' : 'plus-square'}
           className={`${prefixCls}-switcher-line-icon`}
           theme="outlined"
         />
       );
-    }
-    const switcherCls = `${prefixCls}-switcher-icon`;
-    if (isLeaf) {
-      return null;
-    }
-    if (switcherIcon) {
-      const switcherOriginCls = switcherIcon.props.className || '';
-      return React.cloneElement(switcherIcon, {
-        className: classNames(switcherOriginCls, switcherCls),
-      });
     }
     return <Icon type="caret-down" className={switcherCls} theme="filled" />;
   };
@@ -227,6 +228,7 @@ export default class Tree extends React.Component<TreeProps, any> {
       prefixCls: customizePrefixCls,
       className,
       showIcon,
+      showLine,
       switcherIcon,
       blockNode,
       children,
@@ -237,6 +239,9 @@ export default class Tree extends React.Component<TreeProps, any> {
       <RcTree
         ref={this.setTreeRef}
         {...props}
+        // Hide icon in node when showLine is true, show icon in line always
+        // https://github.com/ant-design/ant-design/issues/20090
+        showIcon={showLine ? false : showIcon}
         prefixCls={prefixCls}
         className={classNames(className, {
           [`${prefixCls}-icon-hide`]: !showIcon,

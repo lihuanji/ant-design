@@ -13,6 +13,10 @@ Before all start, you may need install [yarn](https://github.com/yarnpkg/yarn/).
 
 ```bash
 $ yarn create react-app antd-demo
+
+# or
+
+$ npx create-react-app antd-demo
 ```
 
 The tool will create and initialize environment and dependencies automatically, please try config your proxy setting or use another npm registry if any network errors happen during it.
@@ -88,7 +92,7 @@ Ok, you should now see a blue primary button displayed on the page. Next you can
 
 ## Advanced Guides
 
-We are successfully running antd components now but in the real world, there are still lots of problems about antd-demo. For instance, we actually import styles of all components in the project which may be a css bundle size issue (It is OK then if you don't case the gzipped 60kb css file size).
+We are successfully running antd components now but in the real world, there are still lots of problems about antd-demo. For instance, we actually import styles of all components in the project which may be a css bundle size issue (It is OK then if you don't care the gzipped 60kb css file size).
 
 Now we need to customize the default webpack config. We can achieve that by using [react-app-rewired](https://github.com/timarney/react-app-rewired) which is one of create-react-app's custom config solutions.
 
@@ -198,6 +202,21 @@ module.exports = override(
 We use `modifyVars` option of [less-loader](https://github.com/webpack/less-loader#less-options) here, you can see a green button rendered on the page after rebooting the start server.
 
 > You could also try [craco](https://github.com/sharegate/craco) and [craco-antd](https://github.com/FormAPI/craco-antd) to customize create-react-app webpack config same as customize-cra does.
+
+## Replace momentjs to Day.js
+
+You can use [antd-dayjs-webpack-plugin](https://github.com/ant-design/antd-dayjs-webpack-plugin) plugin to replace momentjs to Day.js to reduce bundle size dramatically.
+
+```bash
+$ yarn add antd-dayjs-webpack-plugin
+```
+
+```js
+const { override, addWebpackPlugin } = require('customize-cra');
+const AntdDayjsWebpackPlugin = require('antd-dayjs-webpack-plugin');
+
+module.exports = override(addWebpackPlugin(new AntdDayjsWebpackPlugin()));
+```
 
 ## eject
 

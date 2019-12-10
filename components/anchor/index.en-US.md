@@ -26,10 +26,12 @@ For displaying anchor hyperlinks on page and jumping between them.
 | onClick | set the handler to handle `click` event | Function(e: Event, link: Object) | - | 3.9.0 |
 | getCurrentAnchor | Customize the anchor highlight | () => string | - | 3.22.0 |
 | targetOffset | Anchor scroll offset, default as `offsetTop`, [example](#components-anchor-demo-targetOffset) | number | `offsetTop` | 3.22.0 |
+| onChange | Listening for anchor link change | (currentActiveLink: string) => void |  | 3.24.0 |
 
 ### Link Props
 
-| Property | Description          | Type              | Default | Version |
-| -------- | -------------------- | ----------------- | ------- | ------- |
-| href     | target of hyperlink  | string            |         |         |
-| title    | content of hyperlink | string\|ReactNode |         |         |
+| Property | Description                               | Type              | Default | Version |
+| -------- | ----------------------------------------- | ----------------- | ------- | ------- |
+| href     | target of hyperlink                       | string            |         |         |
+| title    | content of hyperlink                      | string\|ReactNode |         |         |
+| target   | Specifies where to display the linked URL | string            |         |         |

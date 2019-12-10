@@ -88,7 +88,7 @@ class App extends React.Component {
                   <Avatar src="https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png" />
                 }
                 title={<a href="https://ant.design/index-cn">{item.name}</a>}
-                description="Progresser AFX"
+                description="Progresser XTech"
               />
             </List.Item>
           )}
@@ -104,7 +104,7 @@ class App extends React.Component {
           <p style={pStyle}>Personal</p>
           <Row>
             <Col span={12}>
-              <DescriptionItem title="Full Name" content="Lily" />{' '}
+              <DescriptionItem title="Full Name" content="Lily" />
             </Col>
             <Col span={12}>
               <DescriptionItem title="Account" content="AntDesign@example.com" />
@@ -146,7 +146,7 @@ class App extends React.Component {
           </Row>
           <Row>
             <Col span={12}>
-              <DescriptionItem title="Department" content="AFX" />
+              <DescriptionItem title="Department" content="XTech" />
             </Col>
             <Col span={12}>
               <DescriptionItem title="Supervisor" content={<a>Lin</a>} />

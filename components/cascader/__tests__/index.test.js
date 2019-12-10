@@ -3,6 +3,7 @@ import { render, mount } from 'enzyme';
 import KeyCode from 'rc-util/lib/KeyCode';
 import Cascader from '..';
 import focusTest from '../../../tests/shared/focusTest';
+import mountTest from '../../../tests/shared/mountTest';
 
 const options = [
   {
@@ -45,6 +46,7 @@ function filter(inputValue, path) {
 
 describe('Cascader', () => {
   focusTest(Cascader);
+  mountTest(Cascader);
 
   it('popup correctly when panel is hidden', () => {
     const wrapper = mount(<Cascader options={options} />);
@@ -474,7 +476,13 @@ describe('Cascader', () => {
 
   // https://github.com/ant-design/ant-design/issues/18176
   it('have a notFoundContent that fit trigger input width', () => {
-    const wrapper = mount(<Cascader popupVisible options={[]} fieldNames={{ label: 'name', value: 'code', children: 'items' }} />);
+    const wrapper = mount(
+      <Cascader
+        popupVisible
+        options={[]}
+        fieldNames={{ label: 'name', value: 'code', children: 'items' }}
+      />,
+    );
     const popupWrapper = mount(
       wrapper
         .find('Trigger')
@@ -482,5 +490,16 @@ describe('Cascader', () => {
         .getComponent(),
     );
     expect(popupWrapper.render()).toMatchSnapshot();
+  });
+
+  it('placeholder works correctly', () => {
+    const wrapper = mount(<Cascader options={[]} />);
+    expect(wrapper.find('input').prop('placeholder')).toBe('Please select');
+
+    const customPlaceholder = 'Custom placeholder';
+    wrapper.setProps({
+      placeholder: customPlaceholder,
+    });
+    expect(wrapper.find('input').prop('placeholder')).toBe(customPlaceholder);
   });
 });

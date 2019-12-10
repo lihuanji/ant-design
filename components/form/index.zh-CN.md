@@ -45,8 +45,8 @@ title: Form
 | labelCol | （3.14.0 新增，之前的版本只能设置到 FormItem 上。）label 标签布局，同 `<Col>` 组件，设置 `span` `offset` 值，如 `{span: 3, offset: 12}` 或 `sm: {span: 3, offset: 12}` | [object](https://ant.design/components/grid/#Col) |  | 3.14.0 |
 | layout | 表单布局 | 'horizontal'\|'vertical'\|'inline' | 'horizontal' |  |
 | onSubmit | 数据验证成功后回调事件 | Function(e:Event) |  |  |
-| wrapperCol | （3.14.0 新增，之前的版本只能设置到 FormItem 上。）需要为输入控件设置布局样式时，使用该属性，用法同 labelCol | [object](https://ant.design/components/grid/#Col) |  | 3.14.0 |
-| colon | 配置 Form.Item 的 colon 的默认值 | boolean | true | 3.15.0 |
+| wrapperCol | （3.14.0 新增，之前的版本只能设置到 FormItem 上。）需要为输入控件设置布局样式时，使用该属性，用法同 labelCol | [object](https://ant.design/components/grid-cn/#Col) |  | 3.14.0 |
+| colon | 配置 Form.Item 的 colon 的默认值 (只有在属性 layout 为 horizontal 时有效) | boolean | true | 3.15.0 |
 
 ### Form.create(options)
 
@@ -179,7 +179,7 @@ validateFields(['field1', 'field2'], options, (errors, values) => {
 | --- | --- | --- | --- | --- |
 | id | 必填输入控件唯一标志。支持嵌套式的[写法](https://github.com/react-component/form/pull/48)。 | string |  |  |
 | options.getValueFromEvent | 可以把 onChange 的参数（如 event）转化为控件的值 | function(..args) | [reference](https://github.com/react-component/form#option-object) |  |
-| options.initialValue | 子节点的初始值，类型、可选值均由子节点决定(注意：由于内部校验时使用 `===` 判断是否变化，建议使用变量缓存所需设置的值而非直接使用字面量)) |  |  |  |
+| options.initialValue | 子节点的初始值，类型、可选值均由子节点决定([注意：由于内部校验时使用 `===` 判断是否变化，建议使用变量缓存所需设置的值而非直接使用字面量](https://github.com/ant-design/ant-design/issues/4093)) |  |  |  |
 | options.normalize | 转换默认的 value 给控件，[一个选择全部的例子](https://codepen.io/afc163/pen/JJVXzG?editors=001) | function(value, prevValue, allValues): any | - |  |
 | options.preserve | 即便字段不再使用，也保留该字段的值 | boolean | - | 3.12.0 |
 | options.rules | 校验规则，参考下方文档 | object\[] |  |  |
@@ -203,6 +203,7 @@ validateFields(['field1', 'field2'], options, (errors, values) => {
 | htmlFor | 设置子元素 label `htmlFor` 属性 | string |  | 3.17.0 |
 | label | label 标签的文本 | string\|ReactNode |  |  |
 | labelCol | label 标签布局，同 `<Col>` 组件，设置 `span` `offset` 值，如 `{span: 3, offset: 12}` 或 `sm: {span: 3, offset: 12}`。在 3.14.0 之后，你可以通过 Form 的 labelCol 进行统一设置。当和 Form 同时设置时，以 FormItem 为准。 | [object](https://ant.design/components/grid/#Col) |  |  |
+| labelAlign | 标签文本对齐方式 | 'left' \| 'right' | 'right' | 3.15.0 |
 | required | 是否必填，如不设置，则会根据校验规则自动生成 | boolean | false |  |
 | validateStatus | 校验状态，如不设置，则会根据校验规则自动生成，可选：'success' 'warning' 'error' 'validating' | string |  |  |
 | wrapperCol | 需要为输入控件设置布局样式时，使用该属性，用法同 labelCol。在 3.14.0 之后，你可以通过 Form 的 wrapperCol 进行统一设置。当和 Form 同时设置时，以 FormItem 为准。 | [object](https://ant.design/components/grid/#Col) |  |  |
@@ -276,3 +277,38 @@ validator(rule, value, callback) => {
   }
 }
 ```
+
+### 如何在函数组件中拿到 form 实例？
+
+你需要通过 `forwardRef` 和 `useImperativeHandle` 的组合使用来实现在函数组件中正确拿到 form 实例：
+
+```tsx
+import React, { forwardRef, useImperativeHandle } from 'react';
+import Form, { FormComponentProps } from 'antd/lib/form/Form';
+
+const FCForm = forwardRef<FormComponentProps, FCFormProps>(({ form, onSubmit }, ref) => {
+  useImperativeHandle(ref, () => ({
+    form,
+  }));
+  `...the rest of your form`;
+});
+const EnhancedFCForm = Form.create<FCFormProps>()(FCForm);
+```
+
+使用表单组件可以写成这样：
+
+```tsx
+const TestForm = () => {
+  const formRef = createRef<Ref>();
+  return (
+    <EnhancedFCForm
+      onSubmit={() => console.log(formRef.current!.form.getFieldValue('name'))}
+      wrappedComponentRef={formRef}
+    />
+  );
+};
+```
+
+在线示例：
+
+[![Edit wrappedComponentRef-in-function-component](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/wrappedcomponentref-in-function-component-fj43c?fontsize=14&hidenavigation=1&theme=dark)

@@ -23,7 +23,7 @@ export interface AlertProps {
   /** Additional content of Alert */
   description?: React.ReactNode;
   /** Callback when close Alert */
-  onClose?: React.MouseEventHandler<HTMLAnchorElement>;
+  onClose?: React.MouseEventHandler<HTMLButtonElement>;
   /** Trigger when animation ending of Alert */
   afterClose?: () => void;
   /** Whether to show icon */
@@ -52,12 +52,12 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
     );
 
     this.state = {
-      closing: true,
+      closing: false,
       closed: false,
     };
   }
 
-  handleClose = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  handleClose = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const dom = ReactDOM.findDOMNode(this) as HTMLElement;
     dom.style.height = `${dom.offsetHeight}px`;
@@ -66,15 +66,15 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
     dom.style.height = `${dom.offsetHeight}px`;
 
     this.setState({
-      closing: false,
+      closing: true,
     });
     (this.props.onClose || noop)(e);
   };
 
   animationEnd = () => {
     this.setState({
+      closing: false,
       closed: true,
-      closing: true,
     });
     (this.props.afterClose || noop)();
   };
@@ -91,6 +91,7 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
       icon,
     } = this.props;
     let { closable, type, showIcon, iconType } = this.props;
+    const { closing, closed } = this.state;
 
     const prefixCls = getPrefixCls('alert', customizePrefixCls);
 
@@ -133,7 +134,7 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
       prefixCls,
       `${prefixCls}-${type}`,
       {
-        [`${prefixCls}-close`]: !this.state.closing,
+        [`${prefixCls}-closing`]: closing,
         [`${prefixCls}-with-description`]: !!description,
         [`${prefixCls}-no-icon`]: !showIcon,
         [`${prefixCls}-banner`]: !!banner,
@@ -143,8 +144,8 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
     );
 
     const closeIcon = closable ? (
-      <span
-        role="button"
+      <button
+        type="button"
         onClick={this.handleClose}
         className={`${prefixCls}-close-icon`}
         tabIndex={0}
@@ -154,7 +155,7 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
         ) : (
           <Icon type="close" />
         )}
-      </span>
+      </button>
     ) : null;
 
     const dataOrAriaProps = getDataOrAriaProps(this.props);
@@ -162,23 +163,22 @@ export default class Alert extends React.Component<AlertProps, AlertState> {
     const iconNode = (icon &&
       (React.isValidElement<{ className?: string }>(icon) ? (
         React.cloneElement(icon, {
-          className: classNames({
+          className: classNames(`${prefixCls}-icon`, {
             [icon.props.className as string]: icon.props.className,
-            [`${prefixCls}-icon`]: true,
           }),
         })
       ) : (
         <span className={`${prefixCls}-icon`}>{icon}</span>
       ))) || <Icon className={`${prefixCls}-icon`} type={iconType} theme={iconTheme} />;
 
-    return this.state.closed ? null : (
+    return closed ? null : (
       <Animate
         component=""
         showProp="data-show"
         transitionName={`${prefixCls}-slide-up`}
         onEnd={this.animationEnd}
       >
-        <div data-show={this.state.closing} className={alertCls} style={style} {...dataOrAriaProps}>
+        <div data-show={!closing} className={alertCls} style={style} {...dataOrAriaProps}>
           {showIcon ? iconNode : null}
           <span className={`${prefixCls}-message`}>{message}</span>
           <span className={`${prefixCls}-description`}>{description}</span>

@@ -11,6 +11,7 @@ import isNumeric from '../_util/isNumeric';
 
 // matchMedia polyfill for
 // https://github.com/WickyNilliams/enquire.js/issues/82
+// TODO: Will be removed in antd 4.0 because we will no longer support ie9
 if (typeof window !== 'undefined') {
   const matchMediaPolyfill = (mediaQuery: string) => {
     return {
@@ -20,16 +21,17 @@ if (typeof window !== 'undefined') {
       removeListener() {},
     };
   };
-  window.matchMedia = window.matchMedia || matchMediaPolyfill;
+  // ref: https://github.com/ant-design/ant-design/issues/18774
+  if (!window.matchMedia) window.matchMedia = matchMediaPolyfill as any;
 }
 
-const dimensionMap = {
-  xs: '480px',
-  sm: '576px',
-  md: '768px',
-  lg: '992px',
-  xl: '1200px',
-  xxl: '1600px',
+const dimensionMaxMap = {
+  xs: '479.98px',
+  sm: '575.98px',
+  md: '767.98px',
+  lg: '991.98px',
+  xl: '1199.98px',
+  xxl: '1599.98px',
 };
 
 export interface SiderContextProps {
@@ -50,6 +52,7 @@ export interface SiderProps extends React.HTMLAttributes<HTMLDivElement> {
   defaultCollapsed?: boolean;
   reverseArrow?: boolean;
   onCollapse?: (collapsed: boolean, type: CollapseType) => void;
+  zeroWidthTriggerStyle?: React.CSSProperties;
   trigger?: React.ReactNode;
   width?: number | string;
   collapsedWidth?: number | string;
@@ -105,8 +108,8 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
     if (typeof window !== 'undefined') {
       matchMedia = window.matchMedia;
     }
-    if (matchMedia && props.breakpoint && props.breakpoint in dimensionMap) {
-      this.mql = matchMedia(`(max-width: ${dimensionMap[props.breakpoint]})`);
+    if (matchMedia && props.breakpoint && props.breakpoint in dimensionMaxMap) {
+      this.mql = matchMedia(`(max-width: ${dimensionMaxMap[props.breakpoint]})`);
     }
     let collapsed;
     if ('collapsed' in props) {
@@ -184,6 +187,7 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
       style,
       width,
       collapsedWidth,
+      zeroWidthTriggerStyle,
       ...others
     } = this.props;
     const prefixCls = getPrefixCls('layout-sider', customizePrefixCls);
@@ -194,6 +198,7 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
       'breakpoint',
       'onBreakpoint',
       'siderHook',
+      'zeroWidthTriggerStyle',
     ]);
     const rawWidth = this.state.collapsed ? collapsedWidth : width;
     // use "px" as fallback unit for width
@@ -206,6 +211,7 @@ class InternalSider extends React.Component<InternalSideProps, SiderState> {
           className={`${prefixCls}-zero-width-trigger ${prefixCls}-zero-width-trigger-${
             reverseArrow ? 'right' : 'left'
           }`}
+          style={zeroWidthTriggerStyle}
         >
           <Icon type="bars" />
         </span>

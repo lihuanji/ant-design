@@ -5,7 +5,7 @@ import ScrollParallax from 'rc-scroll-anim/lib/ScrollParallax';
 import { Link } from 'bisheng/router';
 import { FormattedMessage, useIntl } from 'react-intl';
 import GitHubButton from 'react-github-button';
-import { Button } from 'antd';
+import { Button, Divider, Icon } from 'antd';
 import BannerImage from './BannerImage';
 import * as utils from '../utils';
 
@@ -22,10 +22,22 @@ const Banner = ({ isMobile }) => {
     <div className="home-page-wrapper banner-wrapper" id="banner">
       <div className="banner-bg-wrapper">
         <svg width="400px" height="576px" viewBox="0 0 400 576" fill="none">
-          <TweenOne component="g" animation={[{ opacity: 0, type: 'from' }, { ...loop, y: 15 }]}>
+          <TweenOne
+            component="g"
+            animation={[
+              { opacity: 0, type: 'from' },
+              { ...loop, y: 15 },
+            ]}
+          >
             <ellipse cx="100" cy="100" rx="6" ry="6" stroke="#2F54EB" strokeWidth="1.6" />
           </TweenOne>
-          <TweenOne component="g" animation={[{ opacity: 0, type: 'from' }, { ...loop, y: -15 }]}>
+          <TweenOne
+            component="g"
+            animation={[
+              { opacity: 0, type: 'from' },
+              { ...loop, y: -15 },
+            ]}
+          >
             <g transform="translate(200 450)">
               <g style={{ transformOrigin: '50% 50%', transform: 'rotate(-340deg)' }}>
                 <rect stroke="#FADB14" strokeWidth="1.6" width="9" height="9" />
@@ -67,13 +79,40 @@ const Banner = ({ isMobile }) => {
             {!isMobile && (
               <GitHubButton
                 style={{ marginLeft: 16 }}
-                key="github-button"
                 size="large"
                 type="stargazers"
                 namespace="ant-design"
                 repo="ant-design"
               />
             )}
+          </div>
+          <div
+            key="promote"
+            className="banner-promote"
+            style={{
+              width: isZhCN ? 412 : 522,
+            }}
+          >
+            <Divider>
+              <FormattedMessage id="app.home.recommend" />
+            </Divider>
+            <a
+              href="https://github.com/antvis/G2Plot?from=antd"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                if (window.gtag) {
+                  window.gtag('event', '点击', {
+                    event_category: '首页推广',
+                    event_label: `https://github.com/antvis/G2Plot?from=antd`,
+                  });
+                }
+              }}
+            >
+              <img src="https://antv.vision/icons/icon-512x512.png" alt="AntV logo" />
+              <FormattedMessage id="app.home.recommend.antv.g2plot" />
+              <Icon type="right" style={{ marginLeft: 6, fontSize: 12, opacity: 0.6 }} />
+            </a>
           </div>
         </QueueAnim>
         {!isMobile && (

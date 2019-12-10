@@ -3,6 +3,7 @@ import * as ReactDOM from 'react-dom';
 import * as PropTypes from 'prop-types';
 import classNames from 'classnames';
 import Animate from 'rc-animate';
+import omit from 'omit.js';
 import Row from '../grid/row';
 import Col, { ColProps } from '../grid/col';
 import Icon from '../icon';
@@ -14,7 +15,9 @@ import FormContext, { FormContextProps } from './context';
 
 const ValidateStatuses = tuple('success', 'warning', 'error', 'validating', '');
 
-export type FormLabelAlign = 'left' | 'right';
+const FormLabelAligns = tuple('left', 'right');
+
+export type FormLabelAlign = typeof FormLabelAligns[number];
 
 export interface FormItemProps {
   prefixCls?: string;
@@ -27,7 +30,7 @@ export interface FormItemProps {
   wrapperCol?: ColProps;
   help?: React.ReactNode;
   extra?: React.ReactNode;
-  validateStatus?: (typeof ValidateStatuses)[number];
+  validateStatus?: typeof ValidateStatuses[number];
   hasFeedback?: boolean;
   required?: boolean;
   style?: React.CSSProperties;
@@ -46,7 +49,6 @@ export default class FormItem extends React.Component<FormItemProps, any> {
   static propTypes = {
     prefixCls: PropTypes.string,
     label: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
-    labelAlign: PropTypes.string,
     labelCol: PropTypes.object,
     help: PropTypes.oneOfType([PropTypes.node, PropTypes.bool]),
     validateStatus: PropTypes.oneOf(ValidateStatuses),
@@ -64,7 +66,8 @@ export default class FormItem extends React.Component<FormItemProps, any> {
     const { children, help, validateStatus, id } = this.props;
     warning(
       this.getControls(children, true).length <= 1 ||
-        (help !== undefined || validateStatus !== undefined),
+        help !== undefined ||
+        validateStatus !== undefined,
       'Form.Item',
       'Cannot generate `validateStatus` and `help` automatically, ' +
         'while there are more than one `getFieldDecorator` in it.',
@@ -399,7 +402,7 @@ export default class FormItem extends React.Component<FormItemProps, any> {
   }
 
   renderFormItem = ({ getPrefixCls }: ConfigConsumerProps) => {
-    const { prefixCls: customizePrefixCls, style, className } = this.props;
+    const { prefixCls: customizePrefixCls, style, className, ...restProps } = this.props;
     const prefixCls = getPrefixCls('form', customizePrefixCls);
     const children = this.renderChildren(prefixCls);
     const itemClassName = {
@@ -409,7 +412,25 @@ export default class FormItem extends React.Component<FormItemProps, any> {
     };
 
     return (
-      <Row className={classNames(itemClassName)} style={style} key="row">
+      <Row
+        className={classNames(itemClassName)}
+        style={style}
+        {...omit(restProps, [
+          'id', // It is deprecated because `htmlFor` is its replacement.
+          'htmlFor',
+          'label',
+          'labelAlign',
+          'labelCol',
+          'wrapperCol',
+          'help',
+          'extra',
+          'validateStatus',
+          'hasFeedback',
+          'required',
+          'colon',
+        ])}
+        key="row"
+      >
         {children}
       </Row>
     );

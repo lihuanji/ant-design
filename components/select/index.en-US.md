@@ -33,12 +33,13 @@ Select component to select value from options.
 | dropdownMatchSelectWidth | Whether dropdown's width is same with select. | boolean | true |  |
 | dropdownRender | Customize dropdown content | (menuNode: ReactNode, props) => ReactNode | - | 3.11.0 |
 | dropdownStyle | style of dropdown menu | object | - |  |
+| dropdownMenuStyle | additional style applied to dropdown menu | object | - |  |
 | filterOption | If true, filter options by input, if function, filter options against it. The function will receive two arguments, `inputValue` and `option`, if the function returns `true`, the option will be included in the filtered set; Otherwise, it will be excluded. | boolean or function(inputValue, option) | true |  |
 | firstActiveValue | Value of action option by default | string\|string\[] | - |  |
 | getPopupContainer | Parent Node which the selector should be rendered to. Default to `body`. When position issues happen, try to modify it into scrollable content and position it relative. [Example](https://codesandbox.io/s/4j168r7jw0) | function(triggerNode) | () => document.body |  |
 | labelInValue | whether to embed label in value, turn the format of value from `string` to `{key: string, label: ReactNode}` | boolean | false |  |
 | maxTagCount | Max tag count to show | number | - |  |
-| maxTagTextLength | Max tag count to show | number | - | 3.18.0 |
+| maxTagTextLength | Max tag text length to show | number | - | 3.18.0 |
 | maxTagPlaceholder | Placeholder for not showing tags | ReactNode/function(omittedValues) | - |  |
 | mode | Set mode of Select | 'default' \| 'multiple' \| 'tags' | 'default' |  |
 | notFoundContent | Specify content to show when no result matches.. | string | 'Not Found' |  |
@@ -92,3 +93,9 @@ Select component to select value from options.
 | -------- | ----------- | --------------------- | ------- | ------- |
 | key      |             | string                | -       |         |
 | label    | Group label | string\|React.Element | -       |         |
+
+## FAQ
+
+### The dropdown is closed when click `dropdownRender` area?
+
+See the [dropdownRender example](/components/select/#components-select-demo-custom-dropdown-menu).
